@@ -16,13 +16,13 @@ schemes:
 - "https"
 - "http"
 paths:
-  /signin:
+  /signup:
     post:
       tags:
       - "auth"
-      summary: "Sign In"
+      summary: "Sign Up"
       description: ""
-      operationId: "signin"
+      operationId: "signup"
       consumes:
       - "application/json"
       produces:
@@ -51,7 +51,7 @@ paths:
             type: "object"
             properties:
               errorMessage:
-                type: "integer"
+                type: "string"
               status:
                 type: "integer"
                 example: 400
@@ -79,20 +79,27 @@ paths:
       responses:
         200:
           description: "successful operation"
-          headers:
-            x-sc-username:
-              description: "Login user"
-              type: "string"
-            x-sc-token:
-              description: "JWT Token"
-              type: "string"
+          schema:
+            type: "object"
+            properties:
+              x-sc-username:
+                type: "string"
+              x-sc-token:
+                type: "string"
+              user:
+                type: "object"
+                properties:
+                  id:
+                    type: "integer"
+                  username:
+                    type: "string"
         400:
           description: "Bad Request"
           schema:
             type: "object"
             properties:
               errorMessage:
-                type: "integer"
+                type: "string"
               status:
                 type: "integer"
                 example: 400
@@ -126,7 +133,7 @@ paths:
             type: "object"
             properties:
               errorMessage:
-                type: "integer"
+                type: "string"
               status:
                 type: "integer"
                 example: 400
@@ -136,7 +143,7 @@ paths:
             type: "object"
             properties:
               errorMessage:
-                type: "integer"
+                type: "string"
               status:
                 type: "integer"
                 example: 401
@@ -174,7 +181,7 @@ paths:
             type: "object"
             properties:
               errorMessage:
-                type: "integer"
+                type: "string"
               status:
                 type: "integer"
                 example: 401
@@ -202,7 +209,14 @@ paths:
         description: ""
         required: true
         schema:
-          $ref: '#/definitions/Item'
+          type: "object"
+          properties:
+            item:
+              $ref: '#/definitions/PostItem'
+            tags:
+              type: "array"
+              items:
+                type: "integer"
       responses:
         201:
           description: "Created"
@@ -216,7 +230,7 @@ paths:
             type: "object"
             properties:
               errorMessage:
-                type: "integer"
+                type: "string"
               status:
                 type: "integer"
                 example: 400
@@ -226,7 +240,7 @@ paths:
             type: "object"
             properties:
               errorMessage:
-                type: "integer"
+                type: "string"
               status:
                 type: "integer"
                 example: 401
@@ -256,6 +270,19 @@ paths:
         description: "Item Id"
         required: true
         type: "integer"
+      - name: "body"
+        in: "body"
+        description: ""
+        required: true
+        schema:
+          type: "object"
+          properties:
+            item:
+              $ref: '#/definitions/PostItem'
+            tags:
+              type: "array"
+              items:
+                type: "integer"
       responses:
         200:
           description: "successful operation"
@@ -267,7 +294,7 @@ paths:
             type: "object"
             properties:
               errorMessage:
-                type: "integer"
+                type: "string"
               status:
                 type: "integer"
                 example: 401
@@ -302,7 +329,7 @@ paths:
             type: "object"
             properties:
               errorMessage:
-                type: "integer"
+                type: "string"
               status:
                 type: "integer"
                 example: 401
@@ -340,7 +367,7 @@ paths:
             type: "object"
             properties:
               errorMessage:
-                type: "integer"
+                type: "string"
               status:
                 type: "integer"
                 example: 401
@@ -368,7 +395,7 @@ paths:
         description: ""
         required: true
         schema:
-          $ref: '#/definitions/Tag'
+          $ref: '#/definitions/PostTag'
       responses:
         201:
           description: "Created"
@@ -384,7 +411,7 @@ paths:
             type: "object"
             properties:
               errorMessage:
-                type: "integer"
+                type: "string"
               status:
                 type: "integer"
                 example: 401
@@ -414,6 +441,12 @@ paths:
         description: "Tag Id"
         required: true
         type: "integer"
+      - name: "body"
+        in: "body"
+        description: ""
+        required: true
+        schema:
+          $ref: '#/definitions/PostTag'
       responses:
         200:
           description: "successful operation"
@@ -425,7 +458,7 @@ paths:
             type: "object"
             properties:
               errorMessage:
-                type: "integer"
+                type: "string"
               status:
                 type: "integer"
                 example: 401
@@ -460,7 +493,7 @@ paths:
             type: "object"
             properties:
               errorMessage:
-                type: "integer"
+                type: "string"
               status:
                 type: "integer"
                 example: 401
@@ -495,13 +528,41 @@ definitions:
         type: "array"
         items:
           $ref: '#/definitions/Tag'
+  PostItem:
+    type: "object"
+    properties:
+      userId:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+      quantity:
+        type: "integer"
+        format: "int32"
+      color:
+        type: "string"
+      image_url:
+        type: "string"
+      notes:
+        type: "string"
   Tag:
     type: "object"
     properties:
       id:
         type: "integer"
         format: "int64"
+      user_id:
+        type: "integer"
+        format: "int64"
       name:
         type: "string"
       color:
         type: "string"
+  PostTag:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      color:
+        type: "string"
+  
