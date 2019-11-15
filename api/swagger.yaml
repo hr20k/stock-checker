@@ -38,12 +38,20 @@ paths:
             password:
               type: "string"
       responses:
-        201:
-          description: "Created"
-          headers:
-            Location:
-              description: "users/:id"
-              type: "string"
+        200:
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              x-sc-user:
+                type: "object"
+                properties:
+                  id:
+                    type: "integer"
+                  username:
+                    type: "string"
+              x-sc-token:
+                type: "string"
         400:
           description: "Bad Request"
           schema:
@@ -77,21 +85,19 @@ paths:
               type: "string"
       responses:
         200:
-          description: "successful operation"
+          description: "OK"
           schema:
             type: "object"
             properties:
-              x-sc-username:
-                type: "string"
-              x-sc-token:
-                type: "string"
-              user:
+              x-sc-user:
                 type: "object"
                 properties:
                   id:
                     type: "integer"
                   username:
                     type: "string"
+              x-sc-token:
+                type: "string"
         400:
           description: "Bad Request"
           schema:
@@ -169,7 +175,7 @@ paths:
         type: "integer"
       responses:
         200:
-          description: "successful operation"
+          description: "OK"
           schema:
             type: "array"
             items:
@@ -284,7 +290,7 @@ paths:
                 type: "integer"
       responses:
         200:
-          description: "successful operation"
+          description: "OK"
           schema:
             $ref: '#/definitions/Item'
         401:
@@ -355,7 +361,7 @@ paths:
         type: "integer"
       responses:
         200:
-          description: "successful operation"
+          description: "OK"
           schema:
             type: "array"
             items:
@@ -448,7 +454,7 @@ paths:
           $ref: '#/definitions/PostTag'
       responses:
         200:
-          description: "successful operation"
+          description: "OK"
           schema:
             $ref: '#/definitions/Tag'
         401:
