@@ -109,7 +109,7 @@ paths:
                 type: "integer"
                 example: 400
 
-  /users/:id/password:
+  /users/{id}/password:
     put:
       tags:
       - "users"
@@ -227,7 +227,7 @@ paths:
           description: "Created"
           headers:
             Location:
-              description: "users/:id/items/:itemId"
+              description: "users/{id}/items/{itemId}"
               type: "string"
         400:
           description: "Bad Request"
@@ -406,7 +406,7 @@ paths:
           description: "Created"
           headers:
             Location:
-              description: "users/:id/tags/:tagId"
+              description: "users/{id}/tags/{tagId}"
               type: "string"
         400:
           description: "Bad Request"
