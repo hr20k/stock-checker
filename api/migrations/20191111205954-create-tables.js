@@ -1,68 +1,67 @@
-'use strict';
+'use strict'
 
-var dbm;
-var type;
-var seed;
+var dbm
+var type
+var seed
 
 /**
-  * We receive the dbmigrate dependency from dbmigrate initially.
-  * This enables us to not have to rely on NODE_PATH.
-  */
-exports.setup = function(options, seedLink) {
-  dbm = options.dbmigrate;
-  type = dbm.dataType;
-  seed = seedLink;
-};
+ * We receive the dbmigrate dependency from dbmigrate initially.
+ * This enables us to not have to rely on NODE_PATH.
+ */
+exports.setup = function (options, seedLink) {
+  dbm = options.dbmigrate
+  type = dbm.dataType
+  seed = seedLink
+}
 
-exports.up = function(db) {
+exports.up = function (db) {
   db.runSql(
-    'CREATE TABLE users (\
-      id int(11) UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,\
-      username varchar(64) NOT NULL,\
-      password varchar(64) NOT NULL,\
-      create_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\
-      update_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\
-      delete_at timestamp NULL DEFAULT NULL,\
-      UNIQUE(username)\
-    );'
-  );
+    'CREATE TABLE users (' +
+      'id int(11) UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,' +
+      'username varchar(64) NOT NULL,' +
+      'password varchar(64) NOT NULL,' +
+      'created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,' +
+      'updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,' +
+      'deleted_at timestamp NULL DEFAULT NULL,' +
+      'UNIQUE(username)' +
+    ');'
+  )
   db.runSql(
-    'CREATE TABLE items (\
-      id int(11) UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,\
-      user_id int(11) UNSIGNED NOT NULL,\
-      name varchar(64) NOT NULL,\
-      model_number varchar(64) NULL,\
-      quantity int(11) NOT NULL DEFAULT 0,\
-      image_url varchar(128) NULL,\
-      notes text NULL,\
-      create_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\
-      update_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\
-      delete_at timestamp NULL DEFAULT NULL,\
-      UNIQUE(user_id, name)\
-    );'
-  );
+    'CREATE TABLE items (' +
+      'id int(11) UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,' +
+      'user_id int(11) UNSIGNED NOT NULL,' +
+      'name varchar(64) NOT NULL,' +
+      'quantity int(11) NOT NULL DEFAULT 0,' +
+      'image_url varchar(128) NULL,' +
+      'color varchar(8) NULL,' +
+      'notes text NULL,' +
+      'created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,' +
+      'updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,' +
+      'deleted_at timestamp NULL DEFAULT NULL' +
+    ');'
+  )
   db.runSql(
-    'CREATE TABLE tags (\
-      id int(11) UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,\
-      user_id int(11) UNSIGNED NOT NULL,\
-      name varchar(64) NOT NULL,\
-      color varchar(8) NOT NULL,\
-      create_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\
-      update_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\
-      UNIQUE(user_id, name)\
-    );'
-  );
+    'CREATE TABLE tags (' +
+      'id int(11) UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,' +
+      'user_id int(11) UNSIGNED NOT NULL,' +
+      'name varchar(64) NOT NULL,' +
+      'color varchar(8) NULL,' +
+      'created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,' +
+      'updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,' +
+      'UNIQUE(user_id, name)' +
+    ');'
+  )
   db.runSql(
-    'CREATE TABLE item_tag (\
-      id int(11) UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,\
-      item_id int(11) UNSIGNED NOT NULL,\
-      tag_id int(11) UNSIGNED NOT NULL,\
-      create_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\
-      update_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\
-      delete_at timestamp NULL DEFAULT NULL,\
-      UNIQUE(item_id, tag_id)\
-    );'
-  );
+    'CREATE TABLE items_tags (' +
+      'id int(11) UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,' +
+      'item_id int(11) UNSIGNED NOT NULL,' +
+      'tag_id int(11) UNSIGNED NOT NULL,' +
+      'created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,' +
+      'updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,' +
+      'deleted_at timestamp NULL DEFAULT NULL,' +
+      'UNIQUE(item_id, tag_id)' +
+    ');'
+  )
   // db.createTable('users', {
   //   id: {
   //     type: 'int',
@@ -180,17 +179,17 @@ exports.up = function(db) {
   //   }
   // });
 
-  return null;
-};
+  return null
+}
 
-exports.down = function(db) {
-  db.dropTable('users');
-  db.dropTable('items');
-  db.dropTable('tags');
-  db.dropTable('item_tag');
-  return null;
-};
+exports.down = function (db) {
+  db.dropTable('users')
+  db.dropTable('items')
+  db.dropTable('tags')
+  db.dropTable('item_tag')
+  return null
+}
 
 exports._meta = {
-  "version": 1
-};
+  version: 1
+}
