@@ -5,7 +5,7 @@ info:
   title: "Stock Checker"
   contact:
     email: "haruki.private@gmail.com"
-host: "stock-checker.hr20k.com"
+host: "localhost:3000"
 basePath: "/v1"
 tags:
 - name: "auth"
@@ -13,7 +13,6 @@ tags:
 - name: "items"
 - name: "tags"
 schemes:
-- "https"
 - "http"
 paths:
   /signup:
@@ -148,7 +147,7 @@ paths:
                 type: "integer"
                 example: 401
 
-  /users/:id/items:
+  /users/{id}/items:
     get:
       tags:
       - "items"
@@ -245,7 +244,7 @@ paths:
                 type: "integer"
                 example: 401
   
-  /users/:id/items/:itemId:
+  /users/{id}/items/{itemId}:
     put:
       tags:
       - "items"
@@ -334,7 +333,7 @@ paths:
                 type: "integer"
                 example: 401
 
-  /users/:id/tags:
+  /users/{id}/tags:
     get:
       tags:
       - "tags"
@@ -416,7 +415,7 @@ paths:
                 type: "integer"
                 example: 401
 
-  /users/:id/tags/:tagId:
+  /users/{id}/tags/{tagId}:
     put:
       tags:
       - "tags"
@@ -479,7 +478,7 @@ paths:
         description: "User Id"
         required: true
         type: "integer"
-      - name: "itemId"
+      - name: "tagId"
         in: "path"
         description: "Tag Id"
         required: true
