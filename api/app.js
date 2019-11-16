@@ -1,60 +1,59 @@
-const express = require('express');
-const logger = require('morgan');
-const config = require('config');
-const auth = require('./auth')();
-const index = require('./routes/index');
+const express = require('express')
+const morgan = require('morgan')
+const FileStreamRotator = require('file-stream-rotator')
+const path = require('path')
+const fs = require('fs-extra')
+const bodyParser = require('body-parser')
+const auth = require('./src/auth')()
+const routes = require('./routes/index')
 const moment = require('moment')
 
-const Logger = require('./src/utils/Logger')
+const logger = require('./src/logger')
 
-const app = express();
+const app = express()
 
-app.use(logger(config.morgan.format));
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(auth.initialize())
+app.use('/v1', routes)
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(auth.initialize());
+const logDirectory = path.join(__dirname, './logs')
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)
+const accessLogStream = FileStreamRotator.getStream({
+  filename: logDirectory + '/access-%DATE%.log',
+  frequency: 'daily',
+  verbose: false,
+  date_format: 'YYYY-MM-DD'
+})
+app.use(morgan('combined', { stream: accessLogStream }))
 
-app.use('/', index);
+app.use(function (req, res, next) {
+  const err = new Error('Not Found')
+  err.status = 404
+  next(err)
+})
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+app.use(function (err, req, res, next) {
+  res.locals.message = err.message
+  res.locals.error = req.app.get('env') === 'development' ? err : {}
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  if(!err.status || err.status >= 500){
-    Logger.stderr.error('API内部でエラーが発生しました。')
-    Logger.stderr.error(err)
+  if (!err.status || err.status >= 500) {
+    logger.stderr.error(err)
   }
 
-  // render the error page
-  res.status(err.status || 500);
+  res.status(err.status || 500)
   res.json({
-    errors: {
-      other: {
-        status: err.status,
-        msg: err.message
-      }
-    }
-  });
-});
+    errorMessage: err.message,
+    status: err.status
+  })
+})
 
-/* JSON返却時の日付型は、このフォーマットに統一する */
 app.set('json replacer', function (key, value) {
   if (this[key] instanceof Date) {
-    value = moment.utc(this[key]).format('YYYY-MM-DD HH:mm:ss');
+    value = moment.utc(this[key]).format('YYYY-MM-DD HH:mm:ss')
   }
 
-  return value;
-});
+  return value
+})
 
-module.exports = app;
+module.exports = app

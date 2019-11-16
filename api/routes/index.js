@@ -1,6 +1,8 @@
 const cors = require('cors')
 const express = require('express')
 const auth = require('../src/auth')()
+const util = require('../src/util')
+const logger = require('../src/logger')
 
 const router = express.Router()
 
@@ -16,7 +18,19 @@ router.use(
 )
 router.use('/signup', require('./signup'))
 router.use('/login', require('./login'))
-router.use('/users/:id/items', auth.authenticate(), require('./items'))
-router.use('/users/:id/tags', auth.authenticate(), require('./tags'))
+router.use('/users/:id/items', auth.authenticate(), function (req, res, next) {
+  if (util.checkTokenAndPath(req)) {
+    next()
+  } else {
+    res.sendStatus(401)
+  }
+}, require('./items'))
+router.use('/users/:id/tags', auth.authenticate(), function (req, res, next) {
+  if (util.checkTokenAndPath(req)) {
+    next()
+  } else {
+    res.sendStatus(401)
+  }
+}, require('./tags'))
 
 module.exports = router
