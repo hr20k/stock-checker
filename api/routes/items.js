@@ -63,40 +63,6 @@ router.post('/', [
             .location(`/users/${req.params.id}/items/${item.get('id')}`)
             .end()
         })
-
-      new ItemsTags({ item_id: item.get('id') })
-        .fetchAll()
-        .then(result => {
-          result.invokeThen('destroy')
-            .then(() => {
-              console.log({ result })
-              return result
-            })
-        })
-        .catch(err => {
-          logger.stderr.error(err)
-          res.status(400).json({ errorMessage: err.message, status: 400 })
-        })
-        .then(() => {
-          const itemsTags = tags.map(tag => {
-            return {
-              item_id: item.get('id'),
-              tag_id: tag
-            }
-          })
-          ItemsTags.collection(itemsTags)
-            .invokeThen('save')
-            .then(result => {
-              console.log({ result })
-              return result
-            })
-        })
-        .then(() => {
-          res
-            .status(201)
-            .location(`/users/${req.params.id}/items/${item.get('id')}`)
-            .end()
-        })
     })
     .catch((err) => {
       logger.stderr.error(err)
