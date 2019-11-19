@@ -12,7 +12,7 @@
   "author": "haruki.private@gmail.com",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.569.0",
+    "aws-sdk": "^2.574.0",
     "bcrypt": "^3.0.6",
     "bluebird": "^3.7.1",
     "bookshelf": "^1.0.1",

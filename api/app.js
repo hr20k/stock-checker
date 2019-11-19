@@ -12,6 +12,8 @@ const logger = require('./src/logger')
 
 const app = express()
 
+app.use(express.urlencoded({ extended: true, limit: '10mb' }))
+app.use(express.json({ extended: true, limit: '10mb' }))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(auth.initialize())
