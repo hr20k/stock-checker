@@ -41,7 +41,7 @@ router.post('/', [
   }
   const tags = req.body.tags
   const item = req.body.item
-  item.id = null
+  delete item.id
   item.user_id = req.params.id
 
   new Item(item)
@@ -72,15 +72,14 @@ router.post('/', [
 
 router.put('/:itemId', (req, res) => {
   const tags = req.body.tags
-  const item = req.body.items
-  item.id = null
-  item.user_id = null
+  const item = req.body.item
+  item.id = req.params.itemId
+  delete item.user_id
 
-  new Item({ id: req.params.itemId })
+  new Item()
+    .where('id', req.params.itemId)
     .save(item, { method: 'update', require: true, patch: true })
     .then((item) => {
-      console.log({ item })
-
       new ItemsTags({ item_id: item.get('id') })
         .fetchAll()
         .then(result => {
@@ -103,14 +102,11 @@ router.put('/:itemId', (req, res) => {
           })
           ItemsTags.collection(itemsTags)
             .invokeThen('save')
-            .then(result => {
-              console.log({ result })
-              // return result
+            .then(() => {
               res.json(item)
             })
         })
-    })
-    .catch(err => {
+    }).catch(err => {
       logger.stderr.error(err)
       res.status(400).json({ errorMessage: err.message, status: 400 })
     })
