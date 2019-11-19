@@ -109,6 +109,45 @@ paths:
                 type: "integer"
                 example: 400
 
+  /verify:
+    post:
+      tags:
+      - "auth"
+      summary: "Verify a user"
+      description: ""
+      operationId: "verifyUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "x-sc-token"
+        in: "header"
+        description: "JWT token"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "Bad Request"
+          schema:
+            type: "object"
+            properties:
+              errorMessage:
+                type: "string"
+              status:
+                type: "integer"
+                example: 400
+        401:
+          description: "Unauthorized"
+          schema:
+            type: "object"
+            properties:
+              errorMessage:
+                type: "string"
+              status:
+                type: "integer"
+                example: 401
+
   /users/{id}/password:
     put:
       tags:
@@ -129,11 +168,74 @@ paths:
         description: "User Id"
         required: true
         type: "integer"
+      - name: "body"
+        in: "body"
+        description: ""
+        required: true
+        schema:
+          type: "object"
+          properties:
+            password:
+              type: "string"
+            new_password:
+              type: "string"
       responses:
         200:
           description: "OK"
         400:
           description: "Bad Reqeset"
+          schema:
+            type: "object"
+            properties:
+              errorMessage:
+                type: "string"
+              status:
+                type: "integer"
+                example: 400
+        401:
+          description: "Unauthorized"
+          schema:
+            type: "object"
+            properties:
+              errorMessage:
+                type: "string"
+              status:
+                type: "integer"
+                example: 401
+
+  /images:
+    post:
+      tags:
+      - "items"
+      summary: "Upload a image"
+      description: ""
+      operationId: "uploadImage"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "x-sc-token"
+        in: "header"
+        description: "JWT token"
+        required: true
+        type: "string"
+      - name: "body"
+        in: "body"
+        description: ""
+        required: true
+        schema:
+          type: "object"
+          properties:
+            data:
+              type: "string"
+      responses:
+        201:
+          description: "Created"
+          headers:
+            Location:
+              description: "/public/images/{filename}.jpeg"
+              type: "string"
+        400:
+          description: "Bad Request"
           schema:
             type: "object"
             properties:
