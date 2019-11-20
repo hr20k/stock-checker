@@ -8,14 +8,15 @@ const logger = require('../src/logger')
 AWS.config.update({
   region: config.aws.s3.region
 })
+const s3 = new AWS.S3()
 
 router.post('/', (req, res) => {
-  // console.log({ req: req.body.data })
   const filename = util.generateUuid()
+  const base64 = req.body.data.split(',')[1]
+  const decode = new Buffer.from(base64, 'base64')
 
-  const s3 = new AWS.S3()
   const params = {
-    Body: req.body.data,
+    Body: decode,
     Bucket: config.aws.s3.bucketName,
     Key: `public/images/${filename}.jpeg`
   }
@@ -31,7 +32,7 @@ router.post('/', (req, res) => {
     console.log({ data })
     res
       .status(201)
-      .location(`/public/images/${filename}.jpeg`)
+      .location(`public/images/${filename}.jpeg`)
       .end()
     return res
   })

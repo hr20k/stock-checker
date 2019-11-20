@@ -6,7 +6,7 @@ const Item = bookshelf.model('Item', {
   hasTimestamps: true,
   soft: ['deleted_at'],
   tags () {
-    return this.belongsToMany(Tag)
+    return this.belongsToMany(Tag).where('deleted_at', null)
   }
 }, {
 })

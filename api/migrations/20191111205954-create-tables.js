@@ -58,8 +58,7 @@ exports.up = function (db) {
       'tag_id int(11) UNSIGNED NOT NULL,' +
       'created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,' +
       'updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,' +
-      'deleted_at timestamp NULL DEFAULT NULL,' +
-      'UNIQUE(item_id, tag_id)' +
+      'deleted_at timestamp NULL DEFAULT NULL' +
     ');'
   )
   // db.createTable('users', {

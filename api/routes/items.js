@@ -1,15 +1,31 @@
 const express = require('express')
 const router = express.Router({ mergeParams: true })
+const config = require('config')
+const AWS = require('aws-sdk')
 const { check, validationResult } = require('express-validator')
 const Item = require('../src/models/Item')
 const ItemsTags = require('../src/models/ItemsTags')
 const logger = require('../src/logger')
+
+AWS.config.update({
+  region: config.aws.s3.region
+})
+const s3 = new AWS.S3()
 
 router.get('/', (req, res) => {
   Item.forge()
     .where('user_id', req.params.id)
     .fetchAll({ withRelated: ['tags'] })
     .then(items => {
+      items.filter(item => item.get('image_url')).map(item => {
+        const params = {
+          Bucket: config.aws.s3.bucketName,
+          Key: item.get('image_url')
+        }
+        const url = s3.getSignedUrl('getObject', params)
+        item.set('url', url)
+        return item
+      })
       res.json({ items })
     })
     .catch(Item.NotFoundError, () => {
@@ -47,8 +63,6 @@ router.post('/', [
   new Item(item)
     .save()
     .then((item) => {
-      console.log('item: ', item.attributes)
-
       const itemsTags = tags.map(tag => {
         return {
           item_id: item.get('id'),
@@ -85,7 +99,6 @@ router.put('/:itemId', (req, res) => {
         .then(result => {
           result.invokeThen('destroy')
             .then(() => {
-              console.log({ result })
               return result
             })
         })
