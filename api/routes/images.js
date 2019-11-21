@@ -23,13 +23,11 @@ router.post('/', (req, res) => {
   s3.putObject(params, function (err, data) {
     if (err) {
       logger.stderr.error(err)
-      console.log({ err })
       res.status(400).json({
         errorMessage: err.message,
         status: 400
       })
     }
-    console.log({ data })
     res
       .status(201)
       .location(`public/images/${filename}.jpeg`)

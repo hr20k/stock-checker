@@ -20,7 +20,8 @@ router.get('/', (req, res) => {
       items.filter(item => item.get('image_url')).map(item => {
         const params = {
           Bucket: config.aws.s3.bucketName,
-          Key: item.get('image_url')
+          Key: item.get('image_url'),
+          Expires: 60 * 60 * 24
         }
         const url = s3.getSignedUrl('getObject', params)
         item.set('url', url)
@@ -81,6 +82,33 @@ router.post('/', [
     .catch((err) => {
       logger.stderr.error(err)
       res.status(400).json({ errorMessage: err.message, status: 400 })
+    })
+})
+
+router.get('/:itemId', (req, res) => {
+  new Item({ id: req.params.itemId })
+    .fetch()
+    .then(result => {
+      const params = {
+        Bucket: config.aws.s3.bucketName,
+        Key: result.get('image_url'),
+        Expires: 60 * 60 * 24
+      }
+      const url = s3.getSignedUrl('getObject', params)
+      result.set('url', url)
+      res.json(result)
+    }).catch(Item.NotFoundError, (err) => {
+      logger.stderr.error(err.message)
+      res.status(404).json({
+        errorMessage: 'A item not found.',
+        status: 404
+      })
+    }).catch((err) => {
+      logger.stderr.error(err)
+      res.status(400).json({
+        errorMessage: err.message,
+        status: 400
+      })
     })
 })
 
