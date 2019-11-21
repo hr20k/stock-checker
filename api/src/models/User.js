@@ -16,7 +16,7 @@ const User = bookshelf.model('User', {
       .catch(User.NotFoundError, () => {
         const salt = bcrypt.genSaltSync(10)
         const hash = bcrypt.hashSync(password, salt)
-        return new User({ username, hash })
+        return new User({ username, password: hash })
           .save()
       })
   }),
