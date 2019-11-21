@@ -1,6 +1,7 @@
 const bookshelf = require('./Model')
 const Promise = require('bluebird')
-const bcrypt = Promise.promisifyAll(require('bcrypt'))
+// const bcrypt = Promise.promisifyAll(require('bcrypt'))
+const bcrypt = require('bcrypt')
 
 const User = bookshelf.model('User', {
   tableName: 'users',
@@ -14,7 +15,9 @@ const User = bookshelf.model('User', {
         throw new Error(`${username} already exists.`)
       })
       .catch(User.NotFoundError, () => {
-        return new User({ username, password })
+        const salt = bcrypt.genSaltSync(10)
+        const hash = bcrypt.hashSync(password, salt)
+        return new User({ username, hash })
           .save()
       })
   }),
@@ -22,7 +25,7 @@ const User = bookshelf.model('User', {
     return new User({ username: username })
       .fetch()
       .tap((user) => {
-        return bcrypt.compareAsync(password, user.get('password'))
+        return bcrypt.compare(password, user.get('password'))
           .then((valid) => {
             if (!valid) throw new Error('Invalid password')
           })
