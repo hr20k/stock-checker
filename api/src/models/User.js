@@ -1,6 +1,5 @@
 const bookshelf = require('./Model')
 const Promise = require('bluebird')
-// const bcrypt = Promise.promisifyAll(require('bcrypt'))
 const bcrypt = require('bcrypt')
 
 const User = bookshelf.model('User', {
