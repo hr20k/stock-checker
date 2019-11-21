@@ -5,7 +5,7 @@ const Tag = bookshelf.model('Tag', {
   tableName: 'tags',
   hasTimestamps: true,
   items () {
-    return this.belongsToMany(Item)
+    return this.belongsToMany(Item).where('deleted_at', null)
   }
 }, {
 })
