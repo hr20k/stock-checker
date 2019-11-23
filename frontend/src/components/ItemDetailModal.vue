@@ -34,6 +34,7 @@
         :placeholder-font-size="10"
         :file-size-limit="4000 * 6000"
         accept=".jpg,.jpeg,.png"
+        @initial-image-loaded="imageLoaded"
         @file-size-exceed="$message.error('ファイルサイズが大きすぎます')"
       >
       </croppa>
@@ -128,9 +129,10 @@ export default {
         image.setAttribute('crossorigin', 'anonymous')
         image.src = item.url
         this.initialImage = image
-
-        image.onload = () => {
-          this.imageHeight = image.height / this.quality
+        try {
+          this.croppa.refresh()
+        } catch {
+          console.log('refresh error.')
         }
       }
       this.tags = item.tags.map(tag => tag.name)
@@ -143,6 +145,9 @@ export default {
     }
   },
   methods: {
+    imageLoaded () {
+      this.imageHeight = this.croppa.img.height / this.quality
+    },
     handleClose (tag) {
       this.tags.splice(this.tags.indexOf(tag), 1)
     },
