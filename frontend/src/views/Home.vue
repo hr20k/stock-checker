@@ -1,86 +1,61 @@
 <template>
   <div class="home">
     <el-container>
-      <el-header class="header">Header</el-header>
+      <el-header>
+        <div class="header">
+          <h1 class="rogo">ストックチェッカー</h1>
+          <div class="header-right">
+            <el-button class="logout-button" @click="logout">ログアウト</el-button>
+          </div>
+        </div>
+      </el-header>
       <el-main class="main">
         <el-row>
           <el-col :span="20" :offset="2">
             <div class="grid">
-              <div class="item">
-                <div class="item-content">
-                  <!-- Safe zone, enter your custom markup -->
-                  This can be anything.
-                  <!-- Safe zone ends -->
-                </div>
-              </div>
-              <div class="item">
-                <div class="item-content">
-                  <el-card class="box-card">
-                    <span>Card name</span>
-                    <div v-for="o in [0, 1, 2, 3]" :key="o" class="text">
-                      {{'List item ' + o }}
+              <div class="item" v-for="(item, index) in items" :key="index">
+                <div class="item-content" @click="selectItem(item)">
+                  <el-card class="box-card" @click="setected = item">
+                    <div class="image-slot">
+                      <el-image class="image" :src="item.url" v-if="item.image_url" @load="itemLoaded" lazy>
+                        <div slot="placeholder" class="image-slot">
+                          Loading<span class="dot">...</span>
+                        </div>
+                        <div slot="error" class="image-slot">
+                          <i class="el-icon-picture-outline"></i>
+                        </div>
+                      </el-image>
+                    </div>
+                    <p>{{ item.name }}</p>
+                    <p>個数: {{ item.quantity }}個</p>
+                    <div class="tags" v-if="item.tags">
+                      <el-tag
+                        :key="index"
+                        v-for="(tag, index) in item.tags"
+                        :disable-transitions="false"
+                        type="info"
+                        effect="plain"
+                      >
+                        {{tag.name}}
+                      </el-tag>
                     </div>
                   </el-card>
-                </div>
-              </div>
-              <div class="item">
-                <div class="item-content">
-                  <el-card class="box-card">
-                    <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" class="images">
-                    <div style="padding: 14px;">
-                      <span>Yummy hamburger</span>
-                      <div class="bottom clearfix">
-                        <time class="time">{{ currentDate }}</time>
-                        <el-button type="text" class="button">Operating</el-button>
-                      </div>
-                    </div>
-                  </el-card>
-                </div>
-              </div>
-              <div class="item">
-                <div class="item-content">
-                  <div class="my-custom-content">
-                    Yippee!!!
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="item-content">
-                  <div class="my-custom-content">
-                    Yippee!!!!
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="item-content">
-                  <div class="my-custom-content">
-                    Yippee!!!!!
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="item-content">
-                  <div class="my-custom-content">
-                    Yippee!
-                  </div>
                 </div>
               </div>
             </div>
-            <!-- <div class="grid-content bg-purple"></div> -->
           </el-col>
         </el-row>
       </el-main>
-      <el-footer class="footer">Footer</el-footer>
     </el-container>
-    <el-tooltip class="item" effect="dark" content="クリックしてアイテムを追加" placement="left">
-      <button class="button fixed_btn" @click="isOpen=true"><span></span></button>
-    </el-tooltip>
+    <el-button class="button fixed_btn" icon="el-icon-plus" @click="isOpen=true" circle></el-button>
     <AddItemModal :isOpen='isOpen' @event='close'/>
-    <ItemDetailModal :isOpen='isOpenDetail' :item="selected" @event='close'/>
+    <ItemDetailModal :isOpen='isOpenDetail' :selectedItem="selected" @event='close'/>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+
 // @ is an alias to /src
 import AddItemModal from '@/components/AddItemModal.vue'
 import ItemDetailModal from '@/components/ItemDetailModal.vue'
@@ -94,34 +69,103 @@ export default {
   },
   data () {
     return {
+      id: null,
       grid: null,
-      isOpen: false
+      isOpen: false,
+      isOpenDetail: false,
+      selected: null,
+      items: []
     }
   },
   mounted () {
-    this.grid = new Muuri(
-      '.grid',
-      {
-        dragEnabled: true
-      }
-    )
-    const allItems = this.grid.getItems()
-    console.log(allItems)
+    this.id = JSON.parse(localStorage.getItem('x-sc-user')).id
+    this.getItems().then(() => {
+      this.grid = new Muuri(
+        '.grid',
+        { items: '.item' }
+      )
+    })
   },
-  methods: {}
+  methods: {
+    async getItems () {
+      return axios.get(process.env.VUE_APP_API_BASE_URL + `users/${this.id}/items`, {
+        headers: { 'x-sc-token': localStorage.getItem('x-sc-token') },
+        data: {}
+      }).then(res => {
+        this.items = res.data.items
+      })
+    },
+    itemLoaded () {
+      // なんとかレイアウトし直したい。動かない。
+      this.grid.layout()
+    },
+    selectItem (item) {
+      this.selected = item
+      this.isOpenDetail = true
+    },
+    selectedItemIndex () {
+      return this.items.findIndex(item => item.id === this.selected.id)
+    },
+    logout () {
+      localStorage.clear('x-sc-user')
+      localStorage.clear('x-sc-token')
+      this.$router.push('Login')
+    },
+    close (data) {
+      this.isOpen = false
+      this.isOpenDetail = false
+      if (data && data.status === 'add') {
+        this.items.push(data.item)
+        // DOMが追加されないので仕方なくスリープ
+        setTimeout(() => {
+          const itemElement = Array.from(document.getElementsByClassName('item'))
+          this.grid.add(itemElement.find(i => !i.classList.contains('muuri-item')))
+        }, 500)
+      } else if (data && data.status === 'update') {
+        this.items[this.selectedItemIndex()] = data.item
+      } else if (data && data.status === 'delete') {
+        this.items.splice(this.selectedItemIndex(), 1)
+        this.grid.remove(this.selectedItemIndex())
+      }
+    }
+  }
 }
 </script>
 
 <style lang="sass" scoped>
 @import 'src/assets/style/style.sass'
 
+.el-header
+  padding: 0
+  background-color: $primary
 .header
-  padding: 0
+  position: relative
+  max-width: 1000px
+  padding: 0 10px
+  margin: auto
+.rogo
+  font-size: 20px
+  position:absolute
+  height: 30px
+  padding: 15px 0
+  margin: 0
+  float: left
+  color: $primary-text
+  user-select: none
+  -moz-user-select: none
+  -webkit-user-select: none
+  -ms-user-select: none
+.logout-button
+  color: $primary-text
+  background-color: $primary
+  border-color: $primary-text
+.header-right
+  float: right
+  padding: 10px 0
 .main
-  height: 100vh
+  height: calc(100vh - 60px)
   padding: 20px 0 20px 0
-.footer
-  padding: 0
+
 .grid-content
   border-radius: 4px
   min-height: 36px
@@ -166,28 +210,24 @@ export default {
     width: calc(100% - 11px)
     // height: calc(100vw - 11px)
 
+.image
+  width: 100%
+  text-align: center
+
+.el-tag + .el-tag
+  margin-left: 10px
+
 .fixed_btn
   position: fixed
   bottom: 15px
   right: 15px
-  width: 75px
-  height: 75px
+  width: 65px
+  height: 65px
   background: $primary
-  border-radius: 50%
+  font-size: 120%
+  color: $primary-text
   text-align: center
   vertical-align: middle
   overflow: hidden
-  transition: .4s
   z-index: 4
-.fixed_btn span:before,
-.fixed_btn span:after
-  display: block
-  content: ''
-  position: absolute
-  width: 30px
-  height: 2px
-  margin: 0 25px 0 14px
-  background: $primary-text
-.fixed_btn span:after
-  transform: rotate(90deg)
 </style>
