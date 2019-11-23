@@ -5,7 +5,7 @@ info:
   title: "Stock Checker"
   contact:
     email: "haruki.private@gmail.com"
-host: "localhost:3000"
+host: "api.stock-checker.hr20k.com"
 basePath: "/v1"
 tags:
 - name: "auth"
@@ -13,7 +13,7 @@ tags:
 - name: "items"
 - name: "tags"
 schemes:
-- "http"
+- "https"
 paths:
   /signup:
     post:
@@ -353,6 +353,54 @@ paths:
                 example: 401
   
   /users/{id}/items/{itemId}:
+    get:
+      tags:
+      - "items"
+      summary: "Get a Item"
+      description: ""
+      operationId: "getItem"
+      parameters:
+      - name: "x-sc-token"
+        in: "header"
+        description: "JWT token"
+        required: true
+        type: "string"
+      - name: "id"
+        in: "path"
+        description: "User Id"
+        required: true
+        type: "integer"
+      - name: "itemId"
+        in: "path"
+        description: "Item Id"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: '#/definitions/Item'
+        404:
+          description: "Not Found"
+          schema:
+            type: "object"
+            properties:
+              errorMessage:
+                type: "string"
+              status:
+                type: "integer"
+                example: 404
+        401:
+          description: "Unauthorized"
+          schema:
+            type: "object"
+            properties:
+              errorMessage:
+                type: "string"
+              status:
+                type: "integer"
+                example: 401
+    
     put:
       tags:
       - "items"
@@ -395,6 +443,16 @@ paths:
           description: "OK"
           schema:
             $ref: '#/definitions/Item'
+        404:
+          description: "Not Found"
+          schema:
+            type: "object"
+            properties:
+              errorMessage:
+                type: "string"
+              status:
+                type: "integer"
+                example: 404
         401:
           description: "Unauthorized"
           schema:
@@ -430,6 +488,16 @@ paths:
       responses:
         200:
           description: "OK"
+        404:
+          description: "Not Found"
+          schema:
+            type: "object"
+            properties:
+              errorMessage:
+                type: "string"
+              status:
+                type: "integer"
+                example: 404
         401:
           description: "Unauthorized"
           schema:

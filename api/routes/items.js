@@ -87,15 +87,17 @@ router.post('/', [
 
 router.get('/:itemId', (req, res) => {
   new Item({ id: req.params.itemId })
-    .fetch()
+    .fetch({ withRelated: ['tags'] })
     .then(result => {
-      const params = {
-        Bucket: config.aws.s3.bucketName,
-        Key: result.get('image_url'),
-        Expires: 60 * 60 * 24
+      if (result.get('image_url')) {
+        const params = {
+          Bucket: config.aws.s3.bucketName,
+          Key: result.get('image_url'),
+          Expires: 60 * 60 * 24
+        }
+        const url = s3.getSignedUrl('getObject', params)
+        result.set('url', url)
       }
-      const url = s3.getSignedUrl('getObject', params)
-      result.set('url', url)
       res.json(result)
     }).catch(Item.NotFoundError, (err) => {
       logger.stderr.error(err.message)
