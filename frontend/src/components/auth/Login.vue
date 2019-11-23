@@ -13,7 +13,7 @@
               <div class="message">
                 <span :model="message" v-if="message">{{ message }}</span>
               </div>
-              <el-form label-height="10px" :model="form" :rules="rules" ref="form">
+              <el-form label-height="10px" :model="form" :rules="rules" ref="form" @submit.native.prevent="onSubmit('form')">
                 <el-form-item>
                   <el-input placeholder="ユーザ名" v-model="form.username"></el-input>
                 </el-form-item>
@@ -21,7 +21,7 @@
                   <el-input placeholder="パスワード" v-model="form.password" show-password></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button class="button" @click="onSubmit('form')">ログイン</el-button>
+                  <el-button class="button" native-type="submit">ログイン</el-button>
                 </el-form-item>
               </el-form>
               <el-button class="text-button" type="text" @click="$router.push('Signup')">新規登録</el-button>
