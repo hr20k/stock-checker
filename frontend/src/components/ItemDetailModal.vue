@@ -16,14 +16,11 @@
       <el-input-number v-model="item.quantity" :min="0"></el-input-number>
     </el-form-item>
     <el-form-item label="画像">
-      <div class="slider">
-        <el-slider v-model="imageHeight" :min="150" :max="300"></el-slider>
-      </div>
       <croppa
         v-model="croppa"
         :initial-image="initialImage"
-        :width="250"
-        :height="imageHeight"
+        :width="300"
+        :height="imageHeight ? imageHeight : 200"
         :quality="quality"
         :prevent-white-space="true"
         :show-loading="true"
@@ -41,7 +38,15 @@
       <span v-if="message">{{ message }}</span>
     </el-form-item>
     <el-form-item>
-      <el-button class="" @click="croppa.rotate()">回転</el-button>
+      <el-button class="image-edit" @click="croppa.rotate()">回転</el-button>
+      <el-select v-model="imageHeight" placeholder="縦横比">
+        <el-option
+          v-for="(option, index) in selectOptions"
+          :key="index"
+          :label="option.label"
+          :value="option.value">
+        </el-option>
+      </el-select>
     </el-form-item>
     <el-form-item label="メモ" prop="notes">
       <el-input
@@ -108,11 +113,15 @@ export default {
       tagValue: '',
       croppa: {},
       width: '',
-      imageHeight: 150,
+      imageHeight: null,
       message: '',
       rules: {
         name: [{ required: true, message: '商品の名前を入力して下さい', trigger: 'change' }]
-      }
+      },
+      selectOptions: [
+        { value: 250, label: '1 : 1' },
+        { value: 200, label: '2 : 3' }
+      ]
     }
   },
   mounted () {
@@ -132,7 +141,7 @@ export default {
         try {
           this.croppa.refresh()
         } catch {
-          console.log('refresh error.')
+          // console.log('refresh error.')
         }
       }
       this.tags = item.tags.map(tag => tag.name)
@@ -246,13 +255,13 @@ export default {
     },
     resetForm () {
       try {
-        console.log('remove canvas.')
         this.croppa.remove()
       } catch {
-        console.log('remove error.')
+        // console.log('remove error.')
       }
       this.tagVisible = false
       this.tagValue = ''
+      this.imageHeight = null
       this.item = {
         name: '',
         quantity: 0,
@@ -280,6 +289,8 @@ export default {
   max-width: 250px
 .croppa-container
   background-color: $background
+.image-edit
+  margin-right: 10px
 
 .el-tag + .el-tag
   margin-left: 10px
