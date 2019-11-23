@@ -11,6 +11,7 @@ html
   width: 100%
   height: 100%
 body
+  margin: 0
   color: $primary-text
   background-color: $background
   box-sizing: border-box

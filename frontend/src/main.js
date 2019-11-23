@@ -4,6 +4,9 @@ import ElementUI from 'element-ui'
 import locale from 'element-ui/lib/locale/lang/ja'
 import moment from 'vue-moment'
 import VueLodash from 'vue-lodash'
+import Croppa from 'vue-croppa'
+import VueMuuri from 'vue-muuri'
+import 'vue-muuri/dist/vue-muuri.css'
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -13,6 +16,8 @@ Vue.config.productionTip = false
 Vue.use(ElementUI, { locale })
 Vue.use(moment)
 Vue.use(VueLodash)
+Vue.use(Croppa)
+Vue.use(VueMuuri)
 
 new Vue({
   router,
