@@ -12,12 +12,28 @@
       <el-main class="main">
         <el-row>
           <el-col :span="20" :offset="2">
+            <div class="filter-group">
+              <p>絞り込み</p>
+              <el-input class="filter-text" ref="search" placeholder="Search..." prefix-icon="el-icon-search" v-model="filterValue"></el-input>
+              <el-select
+                class="filter-color"
+                v-model="filterColor"
+                placeholder="All"
+              >
+                <el-option v-for="c in colors" :key="c.value" :label="c.label" :value="c.value">
+                </el-option>
+              </el-select>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="20" :offset="2">
             <div class="grid">
               <div class="item" v-for="(item, index) in items" :key="index">
                 <div class="item-content" @click="selectItem(item)">
                   <el-card class="box-card" @click="setected = item">
-                    <div class="image-slot">
-                      <el-image class="image" :src="item.url" v-if="item.image_url" @load="itemLoaded" lazy>
+                    <div class="image-slot" v-if="item.image_url">
+                      <el-image class="image" :src="item.url" @load="itemLoaded" fit="cover">
                         <div slot="placeholder" class="image-slot">
                           Loading<span class="dot">...</span>
                         </div>
@@ -26,8 +42,10 @@
                         </div>
                       </el-image>
                     </div>
-                    <p>{{ item.name }}</p>
+                    <p class="name">{{ item.name }}</p>
                     <p>個数: {{ item.quantity }}個</p>
+                    <p style="display: none">{{ item.notes }}</p>
+                    <p class="color" style="display: none">{{ item.color }}</p>
                     <div class="tags" v-if="item.tags">
                       <el-tag
                         :key="index"
@@ -70,11 +88,25 @@ export default {
   data () {
     return {
       id: null,
+      filterValue: '',
+      filterColor: '',
       grid: null,
       isOpen: false,
       isOpenDetail: false,
       selected: null,
-      items: []
+      items: [],
+      colors: [
+        { value: '', label: 'All' },
+        { value: '#f44336', label: 'Red' },
+        { value: '#e91e63', label: 'Pink' },
+        { value: '#2196f3', label: 'Blue' },
+        { value: '#00bcd4', label: 'Cyan' },
+        { value: '#4caf50', label: 'Green' },
+        { value: '#ffeb3b', label: 'Yellow' },
+        { value: '#ff9800', label: 'Orange' },
+        { value: '#795548', label: 'Brown' },
+        { value: '#9e9e9e', label: 'Grey' }
+      ]
     }
   },
   mounted () {
@@ -85,6 +117,15 @@ export default {
         { items: '.item' }
       )
     })
+    this.$refs.search.focus()
+  },
+  watch: {
+    filterValue () {
+      this.filter()
+    },
+    filterColor () {
+      this.filter()
+    }
   },
   methods: {
     async getItems () {
@@ -96,8 +137,20 @@ export default {
       })
     },
     itemLoaded () {
-      // なんとかレイアウトし直したい。動かない。
-      this.grid.layout()
+      // なんとかレイアウトし直したい。とりあえずゴリ押し。
+      this.grid.filter(item => false)
+      this.grid.filter(item => true)
+    },
+    filter () {
+      this.grid.filter((item) => {
+        const itemName = item.getElement().getElementsByClassName('name').item(0).innerText.toLowerCase()
+        const itemTags = Array.from(item.getElement().getElementsByClassName('tags').item(0).children).map(t => t.innerText.toLowerCase())
+        const itemColor = item.getElement().getElementsByClassName('color').item(0).innerText
+        const isSearchMatch = !this.filterValue ? true : itemName.includes(this.filterValue.toLowerCase())
+        const isTagsMatch = !this.filterValue ? true : itemTags.find(tag => tag.includes(this.filterValue.toLowerCase()))
+        const isColorMatch = !this.filterColor ? true : itemColor.includes(this.filterColor)
+        return (isSearchMatch || isTagsMatch) && isColorMatch
+      })
     },
     selectItem (item) {
       this.selected = item
@@ -166,6 +219,25 @@ export default {
   height: calc(100vh - 60px)
   padding: 20px 0 20px 0
 
+.filter-group
+  overflow: hidden
+  background-color: #e0e0e0
+  border-radius: 4px
+  margin: 5px
+  max-width: 1000px
+  margin: 0 auto 10px auto
+.filter-group p
+  margin: 5px 10px
+  font-size: 15px
+.filter-text
+  float: left
+  max-width: 320px
+  margin: 5px
+.el-select.filter-color
+  float: left
+  min-width: 160px
+  margin: 5px
+
 .grid-content
   border-radius: 4px
   min-height: 36px
@@ -210,8 +282,22 @@ export default {
     width: calc(100% - 11px)
     // height: calc(100vw - 11px)
 
+.el-card
+  color: $primary-text
+  padding: 0
+
+.el-card p
+  font-size: 15px
+  margin: 10px 0 5px 0
+.el-card p + p
+  margin: 0 0 5px 0
+.image-slot
+  position: relative
+  width: 100%
+
 .image
   width: 100%
+  height: auto
   text-align: center
 
 .el-tag + .el-tag

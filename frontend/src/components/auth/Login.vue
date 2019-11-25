@@ -64,13 +64,11 @@ export default {
         if (valid) {
           axios.post(process.env.VUE_APP_API_BASE_URL + 'login', this.form)
             .then(res => {
-              console.log(res)
               localStorage.setItem('x-sc-user', JSON.stringify(res.data['x-sc-user']))
               localStorage.setItem('x-sc-token', res.data['x-sc-token'])
               this.$router.push('Home')
             })
             .catch(err => {
-              console.log('www: ', err)
               if (err.response.status === 404) {
                 this.message = 'ユーザが存在しません。'
               } else if (err.response.data.errorMessage === 'Invalid password') {

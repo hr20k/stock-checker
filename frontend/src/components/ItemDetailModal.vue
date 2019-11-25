@@ -48,6 +48,23 @@
         </el-option>
       </el-select>
     </el-form-item>
+    <el-form-item label="カラー">
+      <el-select
+        class="select-color"
+        v-model="item.color"
+        placeholder="-"
+      >
+        <el-option
+          v-for="c in colors"
+          :key="c.value"
+          :label="c.label"
+          :value="c.value"
+        >
+          <!-- <span :style="`color: ${c.value}`">{{ c.label }}</span> -->
+        </el-option>
+      </el-select>
+      <div class="square" :style="`background-color: ${item.color ? item.color : '#ffffff'}`"></div>
+    </el-form-item>
     <el-form-item label="メモ" prop="notes">
       <el-input
         type="textarea"
@@ -121,6 +138,18 @@ export default {
       selectOptions: [
         { value: 250, label: '1 : 1' },
         { value: 200, label: '2 : 3' }
+      ],
+      colors: [
+        { value: '', label: '-' },
+        { value: '#f44336', label: 'Red' },
+        { value: '#e91e63', label: 'Pink' },
+        { value: '#2196f3', label: 'Blue' },
+        { value: '#00bcd4', label: 'Cyan' },
+        { value: '#4caf50', label: 'Green' },
+        { value: '#ffeb3b', label: 'Yellow' },
+        { value: '#ff9800', label: 'Orange' },
+        { value: '#795548', label: 'Brown' },
+        { value: '#9e9e9e', label: 'Grey' }
       ]
     }
   },
@@ -291,6 +320,19 @@ export default {
   background-color: $background
 .image-edit
   margin-right: 10px
+
+.select-color
+  max-width: 190px
+  float: left
+.square
+  height: 38px
+  width: 38px
+  margin-left: 10px
+  border-style: solid
+  border-width: thin
+  border-color: #606266
+  border-radius: 10%
+  float: left
 
 .el-tag + .el-tag
   margin-left: 10px
