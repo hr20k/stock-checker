@@ -62,6 +62,7 @@ paths:
               status:
                 type: "integer"
                 example: 400
+  
   /login:
     post:
       tags:
@@ -119,11 +120,6 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "x-sc-token"
-        in: "header"
-        description: "JWT token"
-        required: true
-        type: "string"
       responses:
         200:
           description: "OK"
@@ -147,6 +143,8 @@ paths:
               status:
                 type: "integer"
                 example: 401
+      security:
+      - token: []
 
   /users/{id}/password:
     put:
@@ -158,11 +156,6 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "x-sc-token"
-        in: "header"
-        description: "JWT token"
-        required: true
-        type: "string"
       - name: "id"
         in: "path"
         description: "User Id"
@@ -202,6 +195,8 @@ paths:
               status:
                 type: "integer"
                 example: 401
+      security:
+      - token: []
 
   /images:
     post:
@@ -213,11 +208,6 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "x-sc-token"
-        in: "header"
-        description: "JWT token"
-        required: true
-        type: "string"
       - name: "body"
         in: "body"
         description: ""
@@ -254,6 +244,8 @@ paths:
               status:
                 type: "integer"
                 example: 401
+      security:
+      - token: []
 
   /users/{id}/items:
     get:
@@ -265,11 +257,6 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "x-sc-token"
-        in: "header"
-        description: "JWT token"
-        required: true
-        type: "string"
       - name: "id"
         in: "path"
         description: "User Id"
@@ -292,6 +279,9 @@ paths:
               status:
                 type: "integer"
                 example: 401
+      security:
+      - token: []
+
     post:
       tags:
       - "items"
@@ -301,11 +291,6 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "x-sc-token"
-        in: "header"
-        description: "JWT token"
-        required: true
-        type: "string"
       - name: "id"
         in: "path"
         description: "User Id"
@@ -351,6 +336,8 @@ paths:
               status:
                 type: "integer"
                 example: 401
+      security:
+      - token: []
   
   /users/{id}/items/{itemId}:
     get:
@@ -360,11 +347,6 @@ paths:
       description: ""
       operationId: "getItem"
       parameters:
-      - name: "x-sc-token"
-        in: "header"
-        description: "JWT token"
-        required: true
-        type: "string"
       - name: "id"
         in: "path"
         description: "User Id"
@@ -400,7 +382,9 @@ paths:
               status:
                 type: "integer"
                 example: 401
-    
+      security:
+      - token: []
+
     put:
       tags:
       - "items"
@@ -410,11 +394,6 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "x-sc-token"
-        in: "header"
-        description: "JWT token"
-        required: true
-        type: "string"
       - name: "id"
         in: "path"
         description: "User Id"
@@ -463,6 +442,9 @@ paths:
               status:
                 type: "integer"
                 example: 401
+      security:
+      - token: []
+
     delete:
       tags:
       - "items"
@@ -470,11 +452,6 @@ paths:
       description: ""
       operationId: "deleteItem"
       parameters:
-      - name: "x-sc-token"
-        in: "header"
-        description: "JWT token"
-        required: true
-        type: "string"
       - name: "id"
         in: "path"
         description: "User Id"
@@ -508,6 +485,8 @@ paths:
               status:
                 type: "integer"
                 example: 401
+      security:
+      - token: []
 
   /users/{id}/tags:
     get:
@@ -519,11 +498,6 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "x-sc-token"
-        in: "header"
-        description: "JWT token"
-        required: true
-        type: "string"
       - name: "id"
         in: "path"
         description: "User Id"
@@ -546,6 +520,9 @@ paths:
               status:
                 type: "integer"
                 example: 401
+      security:
+      - token: []
+
     post:
       tags:
       - "tags"
@@ -555,11 +532,6 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "x-sc-token"
-        in: "header"
-        description: "JWT token"
-        required: true
-        type: "string"
       - name: "id"
         in: "path"
         description: "User Id"
@@ -590,6 +562,8 @@ paths:
               status:
                 type: "integer"
                 example: 401
+      security:
+      - token: []
 
   /users/{id}/tags/{tagId}:
     put:
@@ -601,11 +575,6 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "x-sc-token"
-        in: "header"
-        description: "JWT token"
-        required: true
-        type: "string"
       - name: "id"
         in: "path"
         description: "User Id"
@@ -637,6 +606,9 @@ paths:
               status:
                 type: "integer"
                 example: 401
+      security:
+      - token: []
+
     delete:
       tags:
       - "tags"
@@ -644,11 +616,6 @@ paths:
       description: ""
       operationId: "deleteTag"
       parameters:
-      - name: "x-sc-token"
-        in: "header"
-        description: "JWT token"
-        required: true
-        type: "string"
       - name: "id"
         in: "path"
         description: "User Id"
@@ -672,11 +639,13 @@ paths:
               status:
                 type: "integer"
                 example: 401
-  
+      security:
+      - token: []
+
 securityDefinitions:
-  api_key:
+  token:
     type: "apiKey"
-    name: "api_key"
+    name: "x-sc-token"
     in: "header"
 definitions:
   Item:
