@@ -79,6 +79,8 @@ import AddItemModal from '@/components/AddItemModal.vue'
 import ItemDetailModal from '@/components/ItemDetailModal.vue'
 import Muuri from 'muuri'
 
+const moji = require('moji')
+
 export default {
   name: 'Home',
   components: {
@@ -143,14 +145,17 @@ export default {
     },
     filter () {
       this.grid.filter((item) => {
-        const itemName = item.getElement().getElementsByClassName('name').item(0).innerText.toLowerCase()
-        const itemTags = Array.from(item.getElement().getElementsByClassName('tags').item(0).children).map(t => t.innerText.toLowerCase())
+        const itemName = this.mojiConvert(item.getElement().getElementsByClassName('name').item(0).innerText.toLowerCase())
+        const itemTags = Array.from(item.getElement().getElementsByClassName('tags').item(0).children).map(t => this.mojiConvert(t.innerText.toLowerCase()))
         const itemColor = item.getElement().getElementsByClassName('color').item(0).innerText
-        const isSearchMatch = !this.filterValue ? true : itemName.includes(this.filterValue.toLowerCase())
-        const isTagsMatch = !this.filterValue ? true : itemTags.find(tag => tag.includes(this.filterValue.toLowerCase()))
+        const isSearchMatch = !this.filterValue ? true : itemName.includes(this.mojiConvert(this.filterValue.toLowerCase()))
+        const isTagsMatch = !this.filterValue ? true : itemTags.find(tag => tag.includes(this.mojiConvert(this.filterValue.toLowerCase())))
         const isColorMatch = !this.filterColor ? true : itemColor.includes(this.filterColor)
         return (isSearchMatch || isTagsMatch) && isColorMatch
       })
+    },
+    mojiConvert (s) {
+      return moji(s).convert('KK', 'HG').convert('ZE', 'HE').convert('HK', 'ZK').toString()
     },
     selectItem (item) {
       this.selected = item
