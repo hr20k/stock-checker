@@ -124,9 +124,11 @@ router.put('/:itemId', (req, res) => {
     .where('id', req.params.itemId)
     .save(item, { method: 'update', require: true, patch: true })
     .then((item) => {
-      new ItemsTags({ item_id: item.get('id') })
+      new ItemsTags()
+        .where('item_id', item.get('id'))
         .fetchAll()
         .then(result => {
+          console.log({ result })
           result.invokeThen('destroy')
             .then(() => {
               return result
