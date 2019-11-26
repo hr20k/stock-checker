@@ -133,9 +133,9 @@ export default {
       ],
       colors: [
         { value: '', label: '-' },
-        { value: '#FFFFFF', label: 'White' },
-        { value: '#CAA846', label: 'Gold' },
-        { value: '#BDC3C9', label: 'Silver' },
+        { value: '#ffffff', label: 'White' },
+        { value: '#caa846', label: 'Gold' },
+        { value: '#bdc3c9', label: 'Silver' },
         { value: '#f44336', label: 'Red' },
         { value: '#e91e63', label: 'Pink' },
         { value: '#2196f3', label: 'Blue' },
