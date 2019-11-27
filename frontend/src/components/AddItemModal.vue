@@ -216,7 +216,7 @@ export default {
                   headers: { 'x-sc-token': localStorage.getItem('x-sc-token') },
                   data: {}
                 }).then(item => {
-                  this.$emit('event', { status: 'add', item: item })
+                  this.$emit('event', { status: 'add', item: item.data })
                 })
               })
             })
