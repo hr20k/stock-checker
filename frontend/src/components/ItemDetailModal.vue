@@ -33,6 +33,7 @@
         accept=".jpg,.jpeg,.png"
         @initial-image-loaded="imageLoaded"
         @file-size-exceed="$message.error('ファイルサイズが大きすぎます')"
+        @image-remove="item.image_url = ''"
       >
       </croppa>
       <span v-if="message">{{ message }}</span>
