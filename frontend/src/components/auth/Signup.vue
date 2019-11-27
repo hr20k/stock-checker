@@ -60,7 +60,7 @@ export default {
         ],
         password: [
           { required: true, message: 'パスワードを入力して下さい', trigger: 'change' },
-          { min: 4, max: 20, message: 'パスワードは4文字以上20文字以下です', trigger: 'change' }
+          { min: 8, max: 20, message: 'パスワードは8文字以上20文字以下です', trigger: 'change' }
         ],
         passwordAgain: [
           { required: true, message: 'パスワードを入力して下さい', trigger: 'change' },

@@ -261,6 +261,7 @@ export default {
         image_url: '',
         notes: ''
       }
+      this.tags = []
     },
     fullscreen () {
       this.width = window.innerWidth < 700 ? '100%' : '70%'
