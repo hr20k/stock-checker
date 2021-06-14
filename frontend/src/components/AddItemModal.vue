@@ -170,7 +170,7 @@ export default {
       })
     },
     handleInputConfirm () {
-      let tagValue = this.tagValue
+      const tagValue = this.tagValue
       if (this.tags.includes(tagValue)) {
         this.$message.error('タグがすでに存在します')
       } else {
@@ -201,17 +201,17 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.croppa && this.croppa.hasImage()) {
-            axios.post(process.env.VUE_APP_API_BASE_URL + `images`,
+            axios.post(process.env.VUE_APP_API_BASE_URL + 'images',
               { data: this.croppa.generateDataUrl('image/jpeg') },
               { headers: { 'x-sc-token': localStorage.getItem('x-sc-token') } }
             ).then(res => {
-              this.item.image_url = res.headers['location']
+              this.item.image_url = res.headers.location
               axios.post(process.env.VUE_APP_API_BASE_URL + `users/${this.id}/items`,
                 { item: this.item, tags: this.tags.map(tag => this.allTags.find(t => t.name === tag).id) },
                 { headers: { 'x-sc-token': localStorage.getItem('x-sc-token') } }
               ).then((result) => {
                 this.resetForm()
-                const itemId = result.headers['location'].split('/').pop()
+                const itemId = result.headers.location.split('/').pop()
                 axios.get(process.env.VUE_APP_API_BASE_URL + `users/${this.id}/items/${itemId}`, {
                   headers: { 'x-sc-token': localStorage.getItem('x-sc-token') },
                   data: {}
@@ -226,7 +226,7 @@ export default {
               { headers: { 'x-sc-token': localStorage.getItem('x-sc-token') } }
             ).then((result) => {
               this.resetForm()
-              const itemId = result.headers['location'].split('/').pop()
+              const itemId = result.headers.location.split('/').pop()
               axios.get(process.env.VUE_APP_API_BASE_URL + `users/${this.id}/items/${itemId}`, {
                 headers: { 'x-sc-token': localStorage.getItem('x-sc-token') },
                 data: {}
